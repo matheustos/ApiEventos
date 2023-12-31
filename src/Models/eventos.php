@@ -25,12 +25,23 @@ class Eventos{
         $stmt->execute();
 
         if($stmt->rowCount() > 0){
-            $res = ['sucesso' => true, 'data' => $conn->lastInsertId()];
+            $res = ['sucesso' => true, 'data' => Eventos::getEvento($conn->lastInsertId())];
         }else{
             $res = ['sucesso' => false, 'erros' => $stmt->errorInfo()];
         }
 
         return $res;
+    }
+
+    public static function getEvento($id){
+        $sql = "SELECT * FROM eventos WHERE id = :id";
+        $conn = DBConnection::getConn();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id);
+        $stmt->execute();
+        $evento = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $evento;
     }
 
     public static function getEventos(){
