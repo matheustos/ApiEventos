@@ -44,6 +44,17 @@ class Eventos{
         return $evento;
     }
 
+    public static function getEventoByNome($nome){
+        $sql = "SELECT * FROM eventos WHERE nome = :nome";
+        $conn = DBConnection::getConn();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":nome", $nome);
+        $stmt->execute();
+        $evento = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $evento;
+    }
+
     public static function getEventos(){
         $sql = "SELECT * FROM eventos";
         $conn = DBConnection::getConn();
@@ -51,7 +62,7 @@ class Eventos{
         $stmt->execute();
         $evento = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        return ["sucesso" => true, "conteudo" => $evento];
+        return $evento;
     }
 
     public static function getEventoByDate($data){
@@ -119,6 +130,28 @@ class Eventos{
         $stmt->execute();
 
         return Eventos::getEventoById($id);
+    }
+    public static function getVagas($nome){
+        $sql = "SELECT vagas FROM eventos WHERE nome = :nome";
+        $conn = DBConnection::getConn();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':nome', $nome);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $vagas = substr($result['vagas'], 0, 10);
+        return $vagas;
+    }
+
+    public static function reduzVagas($nome){
+        
+        $vagas = Eventos::getVagas($nome);
+        $up_vagas = $vagas - 1;
+        $sql = "UPDATE eventos SET vagas = :vagas WHERE nome = :nome";
+        $conn = DBConnection::getConn();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':vagas', $up_vagas);
+        $stmt->bindParam(':nome', $nome);
+        $stmt->execute();
     }
 
     public static function concluirEvento($id){

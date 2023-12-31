@@ -55,9 +55,6 @@ class EventosController{
         if (!$validacaoEvento['sucesso']){
             return ["sucesso"=> false, "conteúdo" => $validacaoEvento['erro']];
         }else{
-            if($id['admin'] != 1){
-                return ["sucesso"=> false, "conteudo"=> "Usuário não autorizado"];
-            }
             $eventos = Eventos::cancelarEvento($id);
             return $eventos;
         }

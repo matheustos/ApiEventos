@@ -3,6 +3,7 @@
 namespace Source\Validators;
 use Source\Models\Eventos;
 
+
 class EventosValidator{
 
     public static function validaDados($dados){
@@ -94,27 +95,30 @@ class EventosValidator{
         if(!isset($id['admin']) || empty($id['admin'])){
             array_push($erros, "O id de administrador deve ser informado.");
         }  
-
-        if(!isset($id['id']) || empty($id['id'])){
-            array_push($erros, "O id deve ser informado.");
+        if($id['admin'] != 1){
+            array_push($erros, "Usuário não autorizado.");
         }else{
-            $data = Eventos::getDate($id);
-            if($data){
-                $dataAtual = date('Y-m-d');
-                if($data == $dataAtual){
-                    array_push($erros, "Não é possivel cancelar o evento na data de inicio.");
-                }
+            if(!isset($id['id']) || empty($id['id'])){
+                array_push($erros, "O id deve ser informado.");
             }else{
-                array_push($erros, "Evento não encontrado.");
-            }
-
-            $status = Eventos::getStatus($id);
-            if($status == "Cancelado"){
-                array_push($erros, "O evento já consta como cancelado.");
-            }elseif($status == "Concluido"){
-                array_push($erros, "Não é possível cancelar um evento que já foi concluido.");
-            }elseif($status == "Em andamento"){
-                array_push($erros, "Não é possível cancelar um evento que já foi iniciado.");
+                $data = Eventos::getDate($id);
+                if($data){
+                    $dataAtual = date('Y-m-d');
+                    if($data == $dataAtual){
+                        array_push($erros, "Não é possivel cancelar o evento na data de inicio.");
+                    }
+                }else{
+                    array_push($erros, "Evento não encontrado.");
+                }
+    
+                $status = Eventos::getStatus($id);
+                if($status == "Cancelado"){
+                    array_push($erros, "O evento já consta como cancelado.");
+                }elseif($status == "Concluido"){
+                    array_push($erros, "Não é possível cancelar um evento que já foi concluido.");
+                }elseif($status == "Em andamento"){
+                    array_push($erros, "Não é possível cancelar um evento que já foi iniciado.");
+                }
             }
         }
 
