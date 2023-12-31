@@ -75,4 +75,16 @@ class EventosController{
         }
     }
 
+    public static function iniciarEventoController($id){
+
+        $validacaoEvento = EventosValidator::iniciarEventoValidator($id);
+
+        if (!$validacaoEvento['sucesso']){
+            return ["sucesso"=> false, "conteúdo" => $validacaoEvento['erro']];
+        }else{
+            $eventos = Eventos::iniciarEvento($id);
+            return $eventos;
+        }
+    }
+
 }

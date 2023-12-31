@@ -122,4 +122,15 @@ class Eventos{
         return Eventos::getEventoById($id);
     }
 
+    public static function iniciarEvento($id){
+        $status = "Em andamento";
+        $sql = "UPDATE eventos SET status = :status WHERE id = :id";
+        $conn = DBConnection::getConn();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':id', $id['id']);
+        $stmt->execute();
+        return Eventos::getEventoById($id);
+    }
+
 }
