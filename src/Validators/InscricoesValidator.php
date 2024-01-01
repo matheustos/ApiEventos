@@ -48,4 +48,44 @@ class InscricoesValidator{
             return ["sucesso" => true];
         }
     }
+
+    public static function presencaValidator($dados){
+        $erros =[];
+
+        if(!isset($dados['id']) || empty($dados['id'])){
+            array_push($erros, "Id não informado.");
+        }
+
+        if(!isset($dados['idInscrito']) || empty($dados['idInscrito'])){
+            array_push($erros, "Id do inscrito não informado.");
+        }
+
+        if(!isset($dados['admin']) || empty($dados['admin'])){
+            array_push($erros, "Id do admin não informado.");
+        }
+
+        if(!isset($dados['presenca']) || empty($dados['presenca'])){
+            array_push($erros, "Presenca não informada.");
+        }
+
+        $status = Eventos::getStatus($dados);
+
+        if($status == "Aberto para inscrições"){
+            array_push($erros, "Não é possível confirmar presença ou ausência em um evento que não foi iniciado.");
+        }
+
+        if($status == "Cancelado"){
+            array_push($erros, "Não é possível confirmar presença ou ausência em um evento cancelado.");
+        }
+
+        if($status == "Concluido"){
+            array_push($erros, "Não é possível confirmar presença ou ausência em um evento concluido.");
+        }
+
+        if(count($erros) > 0){
+            return ["sucesso" => false, "erro" => $erros];
+        }else{
+            return ["sucesso" => true];
+        }
+    }
 }

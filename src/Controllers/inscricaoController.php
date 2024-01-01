@@ -27,4 +27,27 @@ class InscricaoController{
             }
         }
     }
+
+    public static function presencaController($dados){
+
+        $validacaoPresenca = InscricoesValidator::presencaValidator($dados);
+
+        if(!$validacaoPresenca['sucesso']){
+            return ["sucesso" => false, "conteudo" => $validacaoPresenca['erro']];
+        }else{
+            if($dados['admin'] == 1){
+                if($dados['presenca'] == 1){
+                    $presenca = Inscricoes::confirmaPresenca($dados['idInscrito']);
+        
+                    return ["sucesso" => true, "conteudo" => $presenca];
+                }else{
+                    $ausencia = Inscricoes::confirmaAusencia($dados['idInscrito']);
+        
+                    return ["sucesso" => true, "conteudo" => $ausencia];
+                }
+            }else{
+                return ["sucesso" => false, "conteudo" => "Usuário não autorizado."];
+            }
+        }
+    }
 }

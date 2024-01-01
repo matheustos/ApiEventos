@@ -36,4 +36,38 @@ class Inscricoes{
 
         return $inscrito;
     }
+
+    public static function getInscritos(){
+        $sql = "SELECT * FROM inscricoes";
+        $conn = DBConnection::getConn();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $inscritos = $stmt->fetchALL(\PDO::FETCH_ASSOC);
+
+        return $inscritos;
+    }
+
+    public static function confirmaPresenca($dados){
+        $presenca = "Presente";
+        $sql = "UPDATE inscricoes SET presenca = :presenca WHERE id = :id";
+        $conn = DBConnection::getConn();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':presenca', $presenca);
+        $stmt->bindValue(':id', $dados);
+        $stmt->execute();
+
+        return Inscricoes::getInscritoById($dados);
+    }
+
+    public static function confirmaAusencia($dados){
+        $presenca = "Ausente";
+        $sql = "UPDATE inscricoes SET presenca = :presenca WHERE id = :id";
+        $conn = DBConnection::getConn();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':presenca', $presenca);
+        $stmt->bindValue(':id', $dados);
+        $stmt->execute();
+
+        return Inscricoes::getInscritoById($dados);
+    }
 }
