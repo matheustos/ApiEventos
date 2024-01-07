@@ -50,4 +50,23 @@ class InscricaoController{
             }
         }
     }
+
+    public static function avaliacaoEventoController($dados){
+        $validacaoAvaliacao = InscricoesValidator::avaliacaoEventoValidator($dados);
+    
+        if (!$validacaoAvaliacao['sucesso']) {
+            return ["sucesso" => false, "conteudo" => $validacaoAvaliacao['erro']];
+        }
+    
+        $dados = $validacaoAvaliacao['data'];
+    
+        if ($dados['admin'] == 1) {
+            $avaliacao = Inscricoes::avaliacaoEvento($dados);
+    
+            return ["sucesso" => true, "conteudo" => $avaliacao];
+        } else {
+            return ["sucesso" => false, "conteudo" => "Usuário não autorizado."];
+        }
+    }
+    
 }

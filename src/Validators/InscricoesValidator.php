@@ -2,6 +2,7 @@
 
 namespace Source\Validators;
 use Source\Models\eventos;
+use Source\Models\Inscricoes;
 
 class InscricoesValidator{
     public static function inscricaoValidator($dados){
@@ -86,6 +87,34 @@ class InscricoesValidator{
             return ["sucesso" => false, "erro" => $erros];
         }else{
             return ["sucesso" => true];
+        }
+    }
+
+    public static function avaliacaoEventovalidator($dados){
+        $erros = [];
+
+        if(!isset($dados['id']) || empty($dados['id'])){
+            array_push($erros, "O id do evento deve ser informado.");
+        }
+
+        if(!isset($dados['admin']) || empty($dados['admin'])){
+            array_push($erros, "O id de administrador deve ser informado.");
+        }
+
+        if(!isset($dados['avaliacao']) || empty($dados['avaliacao'])){
+            $dados['avaliacao'] = "";
+        }
+
+        $presenca = Inscricoes::getPresenca($dados);
+
+        if ($presenca['presenca'] === null || $presenca['presenca'] === "Ausente"){
+            array_push($erros, "Não é possivel ralizar avaliação em um evento que você não eteve presente.");
+        }
+
+        if(count($erros) > 0){
+            return ["sucesso" => false, "erro" => $erros];
+        }else{
+            return ["sucesso" => true, "data" => $dados];
         }
     }
 }

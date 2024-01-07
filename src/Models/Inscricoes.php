@@ -37,10 +37,15 @@ class Inscricoes{
         return $inscrito;
     }
 
-    public static function getInscritos(){
-        $sql = "SELECT * FROM inscricoes";
+    public static function getInscritos($evento){
+        if (!is_string($evento)) {
+            $evento = is_array($evento) ? reset($evento) : (string) $evento;
+        }
+   
+        $sql = "SELECT * FROM inscricoes WHERE evento = :evento";
         $conn = DBConnection::getConn();
         $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":evento", $evento);
         $stmt->execute();
         $inscritos = $stmt->fetchALL(\PDO::FETCH_ASSOC);
 
@@ -69,5 +74,34 @@ class Inscricoes{
         $stmt->execute();
 
         return Inscricoes::getInscritoById($dados);
+    }
+
+    public static function avaliacaoEvento($dados){
+        $sql = "UPDATE `inscricoes` SET `avaliacoes` = :avaliacao WHERE `id` = :id";
+    
+        $conn = DBConnection::getConn();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $dados["id"]);
+        $stmt->bindValue(":avaliacao", $dados["avaliacao"]);
+        $stmt->execute();
+    
+        if($stmt->rowCount() > 0){
+            $res = ['sucesso' => true, 'data' => Inscricoes::getInscritoById($dados["id"])];
+        } else {
+            $res = ['sucesso' => false, 'erros' => $stmt->errorInfo()];
+        }
+    
+        return $res;
+    }
+
+    public static function getPresenca($dados){
+        $sql = "SELECT presenca FROM inscricoes WHERE id = :id";
+        $conn = DBConnection::getConn();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $dados["id"]);
+        $stmt->execute();
+        $presenca = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $presenca;
     }
 }
